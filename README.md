@@ -86,6 +86,8 @@ This module exposes 3 drawing styles.
 4. `python setup.py install`
 5. navigate to the test folder
 6. `python sketchy-test.py`
+7. `python crossed-test.py`
+8. `python spiral-test.py`
 
 
 
