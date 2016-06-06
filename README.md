@@ -1,9 +1,9 @@
-#sketchy-python-extension
+#Blackstripes-python-extensions
 ###Your drawbot will like it!
 
 
 
-This is a python module written in c. It turns an png image into a svg line drawing. The output is very suitable for vsg capable drawbots.
+This is a python module written in c. It turns an png image into a svg line drawing. The output is very suitable for vsg capable drawbots. We use it every day on [blackstripes.nl](http://www.blackstripes.nl).
 
 ##How to use
 
