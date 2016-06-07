@@ -1,4 +1,4 @@
-#Blackstripes-python-extensions
+#Blackstripes python extensions
 ###Your drawbot will like it!
 
 
