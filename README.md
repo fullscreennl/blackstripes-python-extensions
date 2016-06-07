@@ -78,7 +78,7 @@ This module exposes 3 drawing styles.
 	
 ##How to build
 
-(This module is tested with python 2.7 and puthion 3.4 on mac-osx and linux, but it will probably work on most platforms.)
+(This module is tested with python 2.7 and python 3.4 on mac-osx and linux, but it will probably work on most platforms.)
 
 1. Clone this repo
 2. navigate to the src folder
