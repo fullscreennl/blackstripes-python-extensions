@@ -240,7 +240,7 @@ int pix(SketchyImage *obj,int pixelindex){
 }
 
 int SketchyImage_getPixel(SketchyImage *obj,int x, int y){
-    if (y < 0 || y > obj->height || x < 0 || x > obj->width){
+    if (y < 0 || y > obj->height-1 || x < 0 || x > obj->width-1){
         return 255;
     }
     int index = y * obj->width + x;
