@@ -62,7 +62,7 @@ initspiral(void)
     #if PY_MAJOR_VERSION >= 3
         return m;
     #endif
-        
+
 }
 
 static void appendOpenSegment(FILE *svgFile, float fx, float fy){
@@ -80,7 +80,9 @@ static void appendCloseSegment(FILE *svgFile, float tx, float ty, float radius, 
     fprintf(svgFile, svg_segment_format, radius, radius, long_way_home, dir, tx, ty, color, nib_size_mm);
 }
 
-static void decodePNG(const char* filename,const char* output_filename,float nibsize, const char* color, float scale, int level0, int level1, int level2, int level3, int linespacing, float sigTransX, float sigTransY, float sigScale){
+static void decodePNG(const char* filename,const char* output_filename,float nibsize, const char* color, 
+                      float scale, int level0, int level1, int level2, int level3, int linespacing, 
+                      float sigTransX, float sigTransY, float sigScale, int roundShape){
 
     SketchyImage *im = SketchyImage_allocWithFileName(filename);
     SketchyImage_setNibSize(im, nibsize);
@@ -106,8 +108,11 @@ static void decodePNG(const char* filename,const char* output_filename,float nib
     fprintf(svgFile,svg_formatstring,"100%","100%", width * scale, (height + 100) * scale, width * scale, (height + 100) * scale, scale);
 
     int i = 0;
-
     float radius = sqrt((width / 2.0) * (width / 2.0) + (height / 2.0) * (height / 2.0));
+    if(roundShape){
+        radius = width / 2.0;
+    }
+
     int num_cycles = radius / linespacing;
     int numiterations = 3600 * num_cycles;
     float degree_to_radian_fact = 0.0174532925;
@@ -202,11 +207,15 @@ static PyObject *spiral_draw(PyObject *self, PyObject *args){
     float sigTransX = 0.0;
     float sigTransY = 0.0;
     float sigScale = 1.0;
-    if (!PyArg_ParseTuple(args, "ssfsfiiiiifff", &inputpng, &filename, &nibsize , &color, &scale, &level0, &level1, &level2, &level3, &linespacing, &sigTransX, &sigTransY, &sigScale)){
+    int roundShape = 0;
+    if (!PyArg_ParseTuple(args, "ssfsfiiiiifff|i", &inputpng, &filename, &nibsize, &color,
+                          &scale, &level0, &level1, &level2, &level3, &linespacing,
+                          &sigTransX, &sigTransY, &sigScale, &roundShape)){
         return NULL;
     }
 
-    decodePNG(inputpng, filename, nibsize, color, scale, level0, level1, level2, level3, linespacing, sigTransX, sigTransY, sigScale);
+    decodePNG(inputpng, filename, nibsize, color, scale, level0, level1, level2, level3, 
+              linespacing, sigTransX, sigTransY, sigScale, roundShape);
 
     PyObject *ret = Py_BuildValue("i", 0);
     return ret;

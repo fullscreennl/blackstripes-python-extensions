@@ -64,7 +64,7 @@ initcrossed(void)
     #if PY_MAJOR_VERSION >= 3
         return m;
     #endif
-        
+
 }
 
 static void appendSegment(FILE *svgFile, float fx, float fy,  float tx, float ty, float radius, const char *color, float nib_size_mm, int dir){
