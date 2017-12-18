@@ -7,5 +7,5 @@ spiral.draw("ali.png",   # input
             0.32,                       # scaling factor
             180, 108, 180, 108,         # levels
             2,                          # linespacing
-            540,1021,0.7 				# signature transform
+            540,1021,0.7                # signature transform
             )
