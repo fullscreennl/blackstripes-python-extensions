@@ -178,7 +178,12 @@ static void decodePNG(const char* filename,const char* output_filename,float nib
     appendCloseSegment(svgFile, to_x, to_y, radius, color, nibsize, segment_iterations);
 
     char sig[80000];
-    int success = sprintf(sig, signature, sigTransX, sigTransY, sigScale, nibsize, color);
+    int success = 1;
+    if(sigScale != 0.0){
+        success = sprintf(sig, signature, sigTransX, sigTransY, sigScale, nibsize, color);
+    }else{
+        strcpy(sig, "");
+    }
     if (success){
         fprintf(svgFile,"%s</g></svg>\n", sig);
     }
