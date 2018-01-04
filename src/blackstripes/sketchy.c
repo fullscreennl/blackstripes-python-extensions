@@ -98,7 +98,12 @@ static void decodePNG(const char* filename,const char* output_filename,int maxLi
     }
 
     char sig[80000];
-    int success = sprintf(sig, signature, sigTransX, sigTransY, sigScale, nibsize, color);
+    int success = 1;
+    if(sigScale != 0.0){
+        success = sprintf(sig, signature, sigTransX, sigTransY, sigScale, nibsize, color);
+    }else{
+        strcpy(sig, "");
+    }
     if (success){
         fprintf(svgFile,"\" style=\"fill:none;stroke:%s;stroke-width:%f;stroke-linecap:round;stroke-linejoin:round;\" />%s</g></svg>\n", color, nibsize, sig);
     }
@@ -106,7 +111,7 @@ static void decodePNG(const char* filename,const char* output_filename,int maxLi
 
     //SketchyImage_saveAsPNG(im,output_filename);
     //SketchyImage_saveStateAsPNG(im,"state.png");
-    
+
     SketchyImage_release(im);
 
     char rsvgCommand[200];
