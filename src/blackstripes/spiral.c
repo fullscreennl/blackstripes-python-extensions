@@ -105,7 +105,11 @@ static void decodePNG(const char* filename,const char* output_filename,float nib
     float to_y = 0;
 
     FILE *svgFile = fopen(output_filename, "w");
-    fprintf(svgFile,svg_formatstring,"100%","100%", width * scale, (height + 100) * scale, width * scale, (height + 100) * scale, scale);
+    int extraHeight = 100;
+    if(sigScale == 0.0){
+        extraHeight = 0;
+    }
+    fprintf(svgFile,svg_formatstring,"100%","100%", width * scale, (height + extraHeight) * scale, width * scale, (height + extraHeight) * scale, scale);
 
     int i = 0;
     float radius = sqrt((width / 2.0) * (width / 2.0) + (height / 2.0) * (height / 2.0));
