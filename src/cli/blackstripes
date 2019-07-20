@@ -1,0 +1,171 @@
+#!/usr/bin/python
+from blackstripes import spiral, sketchy, crossed
+import argparse
+import re
+import os
+import webbrowser
+import sys
+
+
+def hex_code(string):
+    if re.search(r'^#?(?:[0-9a-fA-F]{3}){1,2}$', string):
+        if string[0] != "#":
+            string = "#" + string
+        return string
+    msg = "%r is not a valid hex color" % string
+    raise argparse.ArgumentTypeError(msg)
+
+
+def get_output(input_path):
+    basename = os.path.basename(input_path)
+    name = ".".join(basename.split(".")[:-1])
+    return name + ".svg"
+
+
+def get_output_png_path(output_path):
+    return output_path + ".png"
+
+
+def apply_spiral(args):
+    draw_args = [
+        args.input_path,
+        args.output_path,
+        args.linewidth,
+        args.color,
+        args.scale
+    ] \
+        + args.levels \
+        + [args.linespacing] \
+        + args.sigtransform \
+        + [args.round]
+    spiral.draw(*draw_args)
+
+
+def apply_crossed(args):
+    draw_args = [
+        args.input_path,
+        args.output_path,
+        args.linewidth,
+        args.color,
+        args.scale
+    ] \
+        + args.levels \
+        + [args.type] \
+        + args.sigtransform
+    crossed.draw(*draw_args)
+
+
+def apply_sketchy(args):
+    draw_args = [
+        args.input_path,
+        args.output_path,
+        args.linewidth,
+        args.maxlinelength,
+        args.color,
+        args.scale,
+        args.internallinesize,
+    ] \
+        + args.sigtransform
+    sketchy.draw(*draw_args)
+
+
+argparser = argparse.ArgumentParser()
+subparsers = argparser.add_subparsers(dest="command")
+subparsers.required = True
+parser_sketchy = subparsers.add_parser('sketchy')
+parser_spiral = subparsers.add_parser('spiral')
+parser_crossed = subparsers.add_parser('crossed')
+
+
+class A:
+    def __init__(self, *args, **kwargs):
+        self.args = args
+        self.kwargs = kwargs
+
+    def go(self, parser):
+        parser.add_argument(*self.args, **self.kwargs)
+
+
+queue = {
+    parser_sketchy: [],
+    parser_spiral: [],
+    parser_crossed: []
+}
+
+
+def add(parsers, args):
+    for parser in parsers:
+        queue[parser] += args
+
+
+add(
+    [parser_sketchy, parser_spiral, parser_crossed],
+    [
+        A("output", nargs="?"),
+        A("input", nargs=1),
+        A("--output", "-o"),
+        A("--linewidth", "--nibsize",
+          "--width", "-n", type=float, default=2.0),
+        A("--color", "-c", type=hex_code, default="#000000"),
+        A("--scale", "-s", type=float, default=1.0),
+        A("--sigtransform", "--sig", "-t", nargs=3,
+                            type=float, default=[0, 0, 0], metavar=("X", "Y", "SCALE")),
+        A("--preview-svg", action="store_true",
+          help="preview the output svg and exit"),
+        A("--preview-png", "--preview", "-p",
+          action="store_true", help="preview the output png and exit")
+    ]
+)
+add(
+    [parser_spiral, parser_crossed],
+    [
+        A("--levels", nargs=4, type=int,
+          default=[180, 108, 180, 108], metavar="LEVEL")
+    ]
+)
+add(
+    [parser_spiral],
+    [
+        A("--linespacing", "--spacing", type=int, default=2),
+        A("--round", "-r", action="store_true")
+    ]
+)
+add(
+    [parser_sketchy],
+    [
+        A("--internallinesize", "--linesize",
+          "-S", type=int, default=2),
+        A("--maxlinelength", "--maxlen",
+          "-m", type=int, default=100)
+    ]
+)
+add(
+    [parser_crossed],
+    [
+        A("--type", type=int, default=1)
+    ]
+)
+
+
+for parser in queue:
+    for a in queue[parser]:
+        a.go(parser)
+
+parser_spiral.set_defaults(func=apply_spiral)
+parser_crossed.set_defaults(func=apply_crossed)
+parser_sketchy.set_defaults(func=apply_sketchy)
+
+
+def apply_args(str_args):
+    args = argparser.parse_args(str_args)
+    args.input_path = args.input[-1]
+    args.output_path = args.output or get_output(args.input[-1])
+    args.func(args)
+    if args.preview_svg:
+        webbrowser.open(args.output_path)
+    if args.preview_png:
+        webbrowser.open(get_output_png_path(args.output_path))
+
+
+if __name__ == "__main__":
+    apply_args(sys.argv[1:])
