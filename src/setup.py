@@ -1,6 +1,6 @@
 from distutils.core import setup, Extension
 
-module1 = Extension('blackstripes.sketchy', sources = 
+module1 = Extension('blackstripes.sketchy', sources =
 	['blackstripes/sketchy.c',
 	 'lib/lodepng/lodepng.c',
 	 'lib/sketchy/SketchyImage.c',
@@ -9,7 +9,7 @@ module1 = Extension('blackstripes.sketchy', sources =
 	 'lib/sketchy/FSArray.c',
 	 'lib/sketchy/FSNumber.c'])
 
-module2 = Extension('blackstripes.crossed', sources = 
+module2 = Extension('blackstripes.crossed', sources =
 	['blackstripes/crossed.c',
 	 'lib/lodepng/lodepng.c',
 	 'lib/sketchy/SketchyImage.c',
@@ -18,7 +18,7 @@ module2 = Extension('blackstripes.crossed', sources =
 	 'lib/sketchy/FSArray.c',
 	 'lib/sketchy/FSNumber.c'])
 
-module3 = Extension('blackstripes.spiral', sources = 
+module3 = Extension('blackstripes.spiral', sources =
 	['blackstripes/spiral.c',
 	 'lib/lodepng/lodepng.c',
 	 'lib/sketchy/SketchyImage.c',
@@ -31,6 +31,7 @@ setup (name = 'blackstripes',
        version = '1.0',
        description = 'This is the blackstripes package',
        ext_modules = [module1, module2, module3],
+	   scripts=['cli/blackstripes'],
        packages=['blackstripes'],
        package_dir={'blackstripes': 'blackstripes'},
        )

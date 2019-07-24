@@ -1,16 +1,15 @@
-#Blackstripes python extensions
-###Your drawbot will like it!
-
-
+# Blackstripes python extensions
+### Your drawbot will like it!
 
 This is a python module written in c. It turns an png image into a svg line drawing. The output is very suitable for vsg capable drawbots. We use it every day on [blackstripes.nl](http://www.blackstripes.nl).
 
-##How to use
+This also comes with a command-line interface for using it, installed at the same time as the python module. Check `blackstripes --help` for detailed usage.
 
+## How to use
 
 This module exposes 3 drawing styles.
 
-###1. Sketchy
+### 1. Sketchy
 
 	from blackstripes import sketchy
 
@@ -23,13 +22,17 @@ This module exposes 3 drawing styles.
                 1,                          # line size (internal line size for calculations)
                 540, 1021, 0.7              # signature transform tx, ty, scale
             )
-            
+
+Using the CLI:
+
+	blackstripes sketchy ali.png --output ali_sketchy.svg
+
 
 ![example](sketchy-example.png)
 
-######How does it work
+###### How does it work
 
-1. Calculate the brightness of the inpute image.
+1. Calculate the brightness of the input image.
 2. Place the pen at pixel 0,0.
 3. Get a random line length between 10 and the max segment length.
 4. Evaluate 360 lines by making a 360 degree sweep with the selected line length.
@@ -40,7 +43,7 @@ This module exposes 3 drawing styles.
 9. Repeat from step 2 until the brightness of the output image is equal to the inpute image.
 
 
-###2. Crossed
+### 2. Crossed
 
 	from blackstripes import crossed
 
@@ -53,12 +56,17 @@ This module exposes 3 drawing styles.
                 2,                      # type
                 540,1021,0.7            # signature transform
             )
-            
+
+
+Using the CLI:
+
+	blackstripes crossed ali.png --output ali_sketchy.svg
+
 
 ![example](crossed-example.png)
 
 
-###2. Spiral
+### 3. Spiral
 
 	from blackstripes import spiral
 
@@ -71,12 +79,17 @@ This module exposes 3 drawing styles.
                 2,                          # linespacing
                 540,1021,0.7                # signature transform
             )
-            
+
+
+Using the CLI:
+
+	blackstripes spiral ali.png --output ali_sketchy.svg
+
 
 ![example](spiral-example.png)
 
-	
-##How to build
+
+## How to build
 
 (This module is tested with python 2.7 and python 3.4 on mac-osx and linux, but it will probably work on most platforms.)
 
@@ -88,13 +101,3 @@ This module exposes 3 drawing styles.
 6. `python sketchy-test.py`
 7. `python crossed-test.py`
 8. `python spiral-test.py`
-
-
-
- 
-
-
-
-
-
-
