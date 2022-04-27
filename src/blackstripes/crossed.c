@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <limits.h>
 #include "Python.h"
 #include "../lib/sketchy/SketchyImage.h"
 #include "../lib/sketchy/Point.h"
@@ -112,11 +113,10 @@ static void decodePNG(const char* filename,const char* output_filename,float nib
     }
     fprintf(svgFile,svg_formatstring,"100%","100%", width * scale, (height + extraHeight) * scale, width * scale, (height + extraHeight) * scale, scale);
 
-    int i = 0;
     float radius = 0;
 
     int16_t *coords;
-    int size;
+    uint64_t size;
     if(type == 1){
         coords = coords_l;
         size = sizeof(coords_l);
@@ -125,13 +125,28 @@ static void decodePNG(const char* filename,const char* output_filename,float nib
         size = sizeof(coords_xl);
     }
 
-    for(i = 0; i < size / sizeof(int16_t); i += 2)
+    // maximum coords (and/or radius - see below) must lie out of image bounds
+    int maxXcoord = INT_MIN;
+    int maxYcoord = INT_MIN;
+    uint64_t numCoords = size / sizeof(coords[0]);
+    for (uint64_t i = 0; i < numCoords; i+=2) {
+        if (coords[i] > maxXcoord) {
+           maxXcoord = coords[i];
+        }
+        if (coords[i+1] > maxYcoord) {
+           maxYcoord= coords[i+1];
+        }
+    }
+    // keep old default value for coordScale 10.0 if no problem is detected
+    // so that we only change behaviour of the problematic cases
+    float coordsScale = fmin(0.5*fmax(maxXcoord/width, maxYcoord/height), 10.0);
+    for(int i = 0; i < numCoords; i += 2)
     {
         if(coords[i] == -20){
             layerIndex ++;
             threshold = levels[layerIndex];
         }else if(coords[i] == -10){
-            radius = coords[i+1] / 10.0;
+            radius = coords[i+1] / coordsScale;
             newstate = 0;
             if (newstate != penstate){
                 to_x = x;
@@ -140,8 +155,8 @@ static void decodePNG(const char* filename,const char* output_filename,float nib
             }
             penstate = newstate;
         }else{
-            x = coords[i] / 10.0;
-            y = coords[i+1] / 10.0;
+            x = coords[i] / coordsScale;
+            y = coords[i+1] / coordsScale;
             pixelvalue = SketchyImage_getPixel(im,(int)round(x),(int)round(y));
             if (pixelvalue < threshold){
                 newstate = 1;
